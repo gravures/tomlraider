@@ -1,0 +1,50 @@
+[build-system]
+requires      = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "tomlraider"
+description = "A cli programm retrieving properties from .toml files."
+authors = [{ name = "Gilles Coissac", email = "gilles@ideographe.fr" }]
+license = { text = "GPL-3.0" }
+requires-python = ">=3.11"
+dependencies = []
+readme = "README.md"
+keywords = ["toml", "cli", "configuration"]
+classifiers = [
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3 :: Only",
+]
+dynamic = ["version"]
+
+[project.urls]
+homepage = "https://github.com/gravures/tomalraider"
+source   = "https://github.com/gravures/tomalraider"
+
+[project.scripts]
+cookiecutter = "tomlraider.main:main"
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.build]
+editable-backend = "path"
+
+[tool.pdm.dev-dependencies]
+dev  = ["pre-commit"]
+test = ["pytest", "hypothesis", "coverage", "covdefaults"]
+lint = ["ruff"]
+
+[tool.pdm.scripts]
+# version    = "setup.py --version"
+test   = "coverage run -m pytest"
+report = "coverage report"
+
+[tool.coverage.run]
+plugins = ["covdefaults"]
+source  = ["src"]
