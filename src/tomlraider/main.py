@@ -27,9 +27,13 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Iterable, NoReturn, TypeAlias
+from typing import TYPE_CHECKING, Any, NoReturn, TypeAlias
 
-import tomllib as tomli
+import tomllib
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 PATH_SEPARTOR = "."
@@ -75,7 +79,7 @@ def parse_path(path: str) -> list[str]:
 
 def read_toml(buffer: str, path: list[str]) -> Toml_T:
     """Returns property from a toml string buffer."""
-    toml_loc = tomli.loads(buffer)
+    toml_loc = tomllib.loads(buffer)
     if not path:
         return toml_loc
     for entry in path[:-1]:
@@ -115,11 +119,11 @@ def main() -> NoReturn:
             self,
             usage: str | None,
             actions: Iterable[argparse.Action],
-            groups: Iterable[argparse._MutuallyExclusiveGroup],
+            groups: Iterable[argparse._MutuallyExclusiveGroup],  # type: ignore[reportPrivateUsage]
             prefix: str | None = None,
         ) -> None:
             if prefix is None:
-                prefix = f"{Path(__file__).stem} {VERSION}\n" f"{DOC}\n\n" "Usage: "
+                prefix = f"{Path(__file__).stem} {VERSION}\n{DOC}\n\nUsage: "
             return super().add_usage(usage, actions, groups, prefix)
 
     parser = argparse.ArgumentParser(
@@ -203,7 +207,7 @@ def main() -> NoReturn:
 
     try:
         value: Toml_T = read_toml(buffer, property_path)
-    except tomli.TOMLDecodeError as e:
+    except tomllib.TOMLDecodeError as e:
         exit_with_error(f"error decoding <{file_name}>, {e}", args.quiet)
     except AttributeError:
         exit_with_error(

@@ -57,11 +57,10 @@ repos:
     rev: v1.5.2
     hooks:
     -   id: dead
-# -   repo: https://github.com/pre-commit/mirrors-mypy
-#     rev: v1.9.0
-#     hooks:
-#     -   id: mypy
-#         args: [--strict, --ignore-missing-imports]
+-   repo: https://github.com/DetachHead/basedpyright
+    rev: v1.10.3
+    hooks:
+    - id: basedpyright
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
     rev: v1.3.3
     hooks:
