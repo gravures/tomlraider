@@ -42,8 +42,17 @@ lint = ["ruff"]
 
 [tool.pdm.scripts]
 # version    = "setup.py --version"
-test   = "coverage run -m pytest"
+require = "pdm export -f requirements -o requirements.txt"
+test = "coverage run -m pytest"
 report = "coverage report"
+pc_init = "pre-commit install"
+pc_update = "pre-commit autoupdate"
+pc_check = "pre-commit run --all-files"
+pc_clean = "pre-commit clean && pre-commit gc"
+pc_safety = { composite = [
+  "require",
+  "pre-commit run python-safety-dependencies-check",
+] }
 
 [tool.coverage.run]
 plugins = ["covdefaults"]
