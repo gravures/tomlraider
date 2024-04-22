@@ -1,3 +1,5 @@
+import tomlraider
+
 # ./tomlraider
 # ./tomlraider project.name
 # ./tomlraider project.name -f -
@@ -41,3 +43,5 @@
 # cat  installer/packages.toml | bin/tomlraider .packaging.packages.apt -q
 # cat  installer/packages.toml | bin/tomlraider .source
 # cat  installer/packages.toml | bin/tomlraider .source.aptz.g
+
+version: str = tomlraider.__version__

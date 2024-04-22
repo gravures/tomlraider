@@ -31,13 +31,14 @@ from typing import TYPE_CHECKING, Any, NoReturn, TypeAlias
 
 import tomllib
 
+from tomlraider._version import __version__
+
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
 
 PATH_SEPARTOR = "."
-VERSION = "0.1.0-dev"
 DOC = __doc__
 
 Toml_T: TypeAlias = (
@@ -123,7 +124,7 @@ def main() -> NoReturn:
             prefix: str | None = None,
         ) -> None:
             if prefix is None:
-                prefix = f"{Path(__file__).stem} {VERSION}\n{DOC}\n\nUsage: "
+                prefix = f"{Path(__file__).stem} {__version__}\n{DOC}\n\nUsage: "
             return super().add_usage(usage, actions, groups, prefix)
 
     parser = argparse.ArgumentParser(
@@ -171,7 +172,7 @@ def main() -> NoReturn:
         "-v",
         "--version",
         action="version",
-        version=f"{Path(__file__).name} {VERSION}",
+        version=f"{Path(__file__).name} {__version__}",
         help="print version and exit",
     )
 

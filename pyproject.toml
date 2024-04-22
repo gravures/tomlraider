@@ -27,13 +27,18 @@ homepage = "https://github.com/gravures/tomlraider"
 source   = "https://github.com/gravures/tomlraider"
 
 [project.scripts]
-cookiecutter = "tomlraider.main:main"
+tomlraider = "tomlraider.main:main"
 
 [tool.pdm]
-distribution = false
+distribution = true
+
+[tool.pdm.version]
+source         = "scm"
+write_to       = "tomlraider/_version.py"
+write_template = "__version__ = '{}'"
 
 [tool.pdm.build]
-editable-backend = "path"
+editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
 dev  = ["ruff==0.4.1", "basedpyright==1.10.3", "pre-commit==3.7.0"]
