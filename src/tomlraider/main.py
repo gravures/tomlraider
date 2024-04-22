@@ -27,7 +27,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import NoReturn, TypeAlias
+from typing import Any, Iterable, NoReturn, TypeAlias
 
 import tomllib as tomli
 
@@ -45,8 +45,8 @@ Toml_T: TypeAlias = (
     | datetime.datetime
     | datetime.date
     | datetime.time
-    | list
-    | dict
+    | list[Any]
+    | dict[str, Any]
 )
 
 
@@ -69,13 +69,13 @@ def exit_with_error(mesg: str, quiet: bool) -> NoReturn:
 
 
 def parse_path(path: str) -> list[str]:
-    """Parses path into a list of keys"""
+    """Parses a path string into a list of keys."""
     return [part for part in path.split(PATH_SEPARTOR) if part]
 
 
 def read_toml(buffer: str, path: list[str]) -> Toml_T:
     """Returns property from a toml string buffer."""
-    toml_loc: dict = tomli.loads(buffer)
+    toml_loc = tomli.loads(buffer)
     if not path:
         return toml_loc
     for entry in path[:-1]:
@@ -91,29 +91,36 @@ def dumps(value: Toml_T, output: Output, path: str) -> str:
 
     match value:
         case None:
-            return "__null"
+            ret = "__null"
         case bool():
-            return "1" if value else "0"
+            ret = "1" if value else "0"
         case str() | int() | float():
-            return str(value)
+            ret = str(value)
         case datetime.datetime():
-            return str(value)
+            ret = str(value)
         case datetime.time():
-            return str(value)
+            ret = str(value)
         case list():
-            return " ".join(value)  # type:ignore
+            ret = " ".join(value)
         case dict():
-            return f"{PATH_SEPARTOR}{path}"
+            ret = f"{PATH_SEPARTOR}{path}"
         case _:
-            raise NotImplementedError(f"Unsupported type: {type(value)}")  # should never happend
+            raise NotImplementedError(f"Unsupported type: {type(value)}")  # should never happened
+    return ret
 
 
 def main() -> NoReturn:
     class CapitalisedHelpFormatter(argparse.HelpFormatter):
-        def add_usage(self, usage, actions, groups, prefix=None):
+        def add_usage(
+            self,
+            usage: str | None,
+            actions: Iterable[argparse.Action],
+            groups: Iterable[argparse._MutuallyExclusiveGroup],
+            prefix: str | None = None,
+        ) -> None:
             if prefix is None:
                 prefix = f"{Path(__file__).stem} {VERSION}\n" f"{DOC}\n\n" "Usage: "
-            return super(CapitalisedHelpFormatter, self).add_usage(usage, actions, groups, prefix)
+            return super().add_usage(usage, actions, groups, prefix)
 
     parser = argparse.ArgumentParser(
         prog=Path(__file__).stem,
@@ -172,7 +179,8 @@ def main() -> NoReturn:
     # Verify input file
     if args.pyproject:
         # looking for a <pyproject.toml> file
-        root = Path(os.environ.get("MESON_SOURCE_ROOT", None) or Path.cwd())
+        meson_root = os.environ.get("MESON_SOURCE_ROOT", None)
+        root = Path(meson_root) if meson_root else Path.cwd()
         tmp = root / "pyproject.toml"
         if not tmp.exists():
             exit_with_error("<pyproject.toml> file not found", args.quiet)
@@ -191,7 +199,7 @@ def main() -> NoReturn:
             f"Reading property <{'.'.join(property_path)}> from <{file_name}>...\n",
             args.quiet,
         )
-        buffer = "".join([line for line in _file])
+        buffer = "".join(list(_file))
 
     try:
         value: Toml_T = read_toml(buffer, property_path)
