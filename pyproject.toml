@@ -36,9 +36,8 @@ distribution = false
 editable-backend = "path"
 
 [tool.pdm.dev-dependencies]
-dev  = ["pre-commit"]
+dev  = ["ruff==0.4.1", "basedpyright==1.10.3", "pre-commit==3.7.0"]
 test = ["pytest", "hypothesis", "coverage", "covdefaults"]
-lint = ["ruff"]
 
 [tool.pdm.scripts]
 # version    = "setup.py --version"
@@ -57,3 +56,14 @@ pc_safety = { composite = [
 [tool.coverage.run]
 plugins = ["covdefaults"]
 source  = ["src"]
+
+[tool.basedpyright]
+defineConstant                    = { PATH_SEPARTOR = "." }
+pythonPlatform                    = "all"
+typeCheckingMode                  = "all"
+venvPath                          = ".venv"
+include                           = ["src"]
+reportAny                         = false
+reportUnusedCallResult            = false
+reportImplicitStringConcatenation = false
+reportImplicitOverride            = false
