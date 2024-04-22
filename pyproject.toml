@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "tomlraider"
-description = "A cli programm retrieving properties from .toml files."
+description = "A cli program retrieving properties from .toml files."
 authors = [{ name = "Gilles Coissac", email = "gilles@ideographe.fr" }]
 license = { text = "GPL-3.0" }
 requires-python = ">=3.11"
@@ -23,8 +23,8 @@ classifiers = [
 dynamic = ["version"]
 
 [project.urls]
-homepage = "https://github.com/gravures/tomalraider"
-source   = "https://github.com/gravures/tomalraider"
+homepage = "https://github.com/gravures/tomlraider"
+source   = "https://github.com/gravures/tomlraider"
 
 [project.scripts]
 cookiecutter = "tomlraider.main:main"
