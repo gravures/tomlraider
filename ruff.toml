@@ -32,7 +32,7 @@ select = [
   'RSE',   # flake8-raise
   'RET',   # flake8-return
   'TCH',   # flake8-todo
-  'PTH',   # flake8-use-pathlib 
+  'PTH',   # flake8-use-pathlib
   'PL',    # pylint
   'TRY',   # tryceratops
   'RUF',   # ruff
