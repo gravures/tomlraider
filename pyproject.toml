@@ -70,16 +70,14 @@ dev  = ["ruff==0.4.1", "basedpyright==1.10.3", "pre-commit==3.7.0"]
 test = ["pytest", "hypothesis", "coverage[toml]", "covdefaults", "tox>=4.0"]
 
 [tool.pdm.scripts]
-# version    = "setup.py --version"
 xrequire    = "pdm export -f requirements -o requirements.txt"
 test_all    = "coverage run -m pytest"
+test_typing = "pdm run basedpyright tomlraider src/tomlraider"
 test_report = "coverage report"
 pc_init     = "pre-commit install"
 pc_update   = "pre-commit autoupdate"
 pc_check    = "pre-commit run --all-files"
 pc_clean    = "pre-commit clean && pre-commit gc"
 
-# pc_safety = { composite = [
-#   "require",
-#   "pre-commit run python-safety-dependencies-check",
-# ] }
+[tool.pdm.scripts.pc_safety]
+composite = ["require", "pre-commit run python-safety-dependencies-check"]
