@@ -62,14 +62,18 @@ write_template = "__version__ = '{}'"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
-dev = ["ruff==0.4.1", "basedpyright==1.10.3", "pre-commit==3.7.0"]
+dev = [
+    "ruff==0.4.1",
+    "basedpyright==1.10.3",
+    "pre-commit==3.7.0",
+    "tox-pdm>=0.7.2",
+]
 test = [
-  "pytest",
-  "hypothesis",
-  "coverage[toml]",
-  "covdefaults",
-  "tox>=4.0",
-  "tox-pdm>=0.7.2",
+    "pytest",
+    "hypothesis",
+    "coverage[toml]",
+    "covdefaults",
+    "tox>=4.0",
 ]
 
 [tool.pdm.scripts]
