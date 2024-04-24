@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade tox .
-          pdm sync --no-editable --dev -G test
+          pdm sync --no-editable --dev -G test -G dev
 
       - name: Tests with tox
         run: |
