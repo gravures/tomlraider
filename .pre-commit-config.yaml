@@ -10,6 +10,13 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
+# Words spelling
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+    -   id: codespell
+        args: [--skip='*.po']
+# Pre-commit hooks
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
@@ -73,9 +80,8 @@ repos:
     hooks:
     -   id: ruff
     -   id: ruff-format
-# Words spelling
--   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+# PDM
+-   repo: https://github.com/pdm-project/pdm
+    rev: 2.15.0
     hooks:
-    -   id: codespell
-        args: [--skip='*.po']
+    - id: pdm-lock-check
