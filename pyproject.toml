@@ -63,31 +63,24 @@ editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "ruff==0.4.1",
-    "basedpyright==1.10.3",
-    "pre-commit==3.7.0",
-    "tox-pdm>=0.7.2",
+  "ruff==0.4.1",
+  "basedpyright==1.10.3",
+  "pre-commit==3.7.0",
+  "tox-pdm>=0.7.2",
 ]
-test = [
-    "pytest",
-    "hypothesis",
-    "coverage[toml]",
-    "covdefaults",
-    "tox>=4.0",
-]
+test = ["pytest", "hypothesis", "coverage[toml]", "covdefaults", "tox>=4.0"]
 
 [tool.pdm.scripts]
 xrequire    = "pdm export -f requirements -o requirements.txt"
 test_all    = "coverage run -m pytest"
-test_typing = "pdm run basedpyright ./src/tomlraider"
-# FIXME: --fail-under=0 --> just for testing
-test_cover = "coverage report --fail-under=0"
-tox_testme = "tox -e py"
-pc_init    = "pre-commit install"
-pc_update  = "pre-commit autoupdate"
-pc_check   = "pre-commit run --all-files --show-diff-on-failure"
-pc_clean   = "pre-commit clean && pre-commit gc"
-deps       = "pdm list --fields name,groups,version,licenses,homepage --sort groups,name,licenses --exclude :sub"
+test_typing = "pdm run basedpyright --stats ./src/tomlraider"
+test_cover  = "coverage report"
+tox_testme  = "tox -e py"
+pc_init     = "pre-commit install"
+pc_update   = "pre-commit autoupdate"
+pc_check    = "pre-commit run --all-files --show-diff-on-failure"
+pc_clean    = "pre-commit clean && pre-commit gc"
+deps        = "pdm list --fields name,groups,version,licenses,homepage --sort groups,name,licenses --exclude :sub"
 
 [tool.pdm.scripts.pc_safety]
 composite = ["require", "pre-commit run python-safety-dependencies-check"]
