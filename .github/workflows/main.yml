@@ -9,7 +9,7 @@ jobs:
   testing:
     strategy:
       matrix:
-        python-version: [3.11, 3.12]
+        python-version: ['3.11', '3.12']
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
@@ -28,7 +28,7 @@ jobs:
       - name: Tests with tox
         run: |
           # tox --version
-          pdm run tox --version
-          pyversion="${{ matrix.python-version }}"
+          # pyversion="${{ matrix.python-version }}"
           # tox -v -e py${pyversion/./}
-          pdm run tox -v -e py${pyversion/./}
+          pdm run tox --version
+          pdm run tox -v -e py
