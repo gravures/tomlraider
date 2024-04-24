@@ -22,11 +22,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade tox .
+          # python -m pip install --upgrade tox .
           pdm sync --no-editable --dev -G test -G dev
 
       - name: Tests with tox
         run: |
-          tox --version
+          # tox --version
+          pdm run tox --version
           pyversion="${{ matrix.python-version }}"
-          tox -v -e py${pyversion/./}
+          # tox -v -e py${pyversion/./}
+          pdm run tox -v -e py${pyversion/./}
