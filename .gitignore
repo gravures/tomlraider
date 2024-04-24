@@ -108,6 +108,7 @@ src/**/_version.py
 
 # sourcery
 .sourcery.yaml
+.ruff_cache
 
 # common
 .work/
@@ -117,3 +118,5 @@ builddir/
 
 # pdm
 .pdm-python
+.pdm-build
+.pdm-plugins
