@@ -110,7 +110,9 @@ def dumps(value: Toml_T, output: Output, path: str) -> str:
         case dict():
             ret = f"{PATH_SEPARTOR}{path}"
         case _:
-            raise NotImplementedError(f"Unsupported type: {type(value)}")  # should never happened
+            # should never happened
+            msg = f"Unsupported type: {type(value)}"
+            raise NotImplementedError(msg)
     return ret
 
 
@@ -129,7 +131,6 @@ def main() -> NoReturn:
 
     parser = argparse.ArgumentParser(
         prog=Path(__file__).stem,
-        # add_help=False,
         formatter_class=CapitalisedHelpFormatter,
     )
     parser.add_argument(
@@ -185,12 +186,12 @@ def main() -> NoReturn:
     if args.pyproject:
         # looking for a <pyproject.toml> file
         meson_root = os.environ.get("MESON_SOURCE_ROOT", None)
-        root = Path(meson_root) if meson_root else Path.cwd()
+        root: Path = Path(meson_root) if meson_root else Path.cwd()
         tmp = root / "pyproject.toml"
         if not tmp.exists():
             exit_with_error("<pyproject.toml> file not found", args.quiet)
         input_file = str(tmp)
-    elif input_file not in ("-", None) and not Path(input_file).exists():
+    elif input_file not in {"-", None} and not Path(str(input_file)).exists():
         exit_with_error(f"File not found: {input_file}", args.quiet)
 
     # Format sys.argv for fileinput module
