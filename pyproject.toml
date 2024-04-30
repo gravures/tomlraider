@@ -35,8 +35,6 @@ tomlraider = "tomlraider.main:main"
 defineConstant                    = { PATH_SEPARTOR = "." }
 pythonPlatform                    = "all"
 typeCheckingMode                  = "all"
-venvPath                          = ".venv"
-include                           = ["src"]
 reportAny                         = false
 reportUnusedCallResult            = false
 reportImplicitStringConcatenation = false
@@ -71,10 +69,18 @@ dev = [
   "pre-commit==3.7.0",
   "tox-pdm>=0.7.2",
 ]
-test = ["pytest", "hypothesis", "coverage[toml]", "covdefaults", "tox>=4.0"]
+test = [
+  "pytest",
+  "hypothesis",
+  "coverage[toml]",
+  "covdefaults",
+  "tox>=4.0",
+  "dm-tree>=0.1.8",
+]
 
 [tool.pdm.scripts]
 xrequire    = "pdm export -f requirements -o requirements.txt"
+test        = "pytest -s -v -k {args}"
 test_all    = "coverage run -m pytest"
 test_typing = "pdm run basedpyright --stats ./src/tomlraider"
 test_cover  = "coverage report"
