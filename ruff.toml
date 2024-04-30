@@ -97,10 +97,12 @@ ignore = [
   'FBT002',  # boolean-default-value-positional-argument
   'FBT001',  # Boolean-typed positional argument in function definition
   'PLR0913', # Too many arguments in function definition ({c_args} > {max_args})
+  'ERA001',  # commented code
 ]
 
 [lint.per-file-ignores]
 "tests/**.py" = [
+  "T20",  # Allow print statements in tests
   "D",    # Ignore docstring rules in tests
   "ANN",  # Ignore type annotations in tests
   "S101", # Yeah of course we assert in tests
@@ -108,8 +110,9 @@ ignore = [
 ]
 
 [lint.isort]
-lines-after-imports = 2
-required-imports    = ["from __future__ import annotations"]
+lines-after-imports    = 2
+required-imports       = ["from __future__ import annotations"]
+extra-standard-library = ["tomllib"]
 
 [lint.pydocstyle]
 convention          = "google"
