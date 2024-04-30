@@ -1,3 +1,4 @@
+# noqa: D104
 # Copyright (c) 2024 - Gilles Coissac
 #
 # tomlraider is free software: you can redistribute it and/or modify
@@ -12,10 +13,44 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with tomlraider. If not, see <https://www.gnu.org/licenses/>
+#
 from __future__ import annotations
 
+from tomlraider._main import (
+    PATH_SEPARTOR,
+    SHELL_LIST_SEPARATOR,
+    Output,
+    TomlAtomicType,
+    TomlContainerType,
+    TomlIndex,
+    TomlKey,
+    TomlPath,
+    TomlPathPart,
+    TomlType,
+    __doc__,
+    join_path,
+    main,
+    parse_path,
+    read_toml,
+)
 from tomlraider._version import __version__
-from tomlraider.main import PATH_SEPARTOR, Output, __doc__
 
 
-__all__ = ["PATH_SEPARTOR", "Output", "__doc__", "__version__"]
+__all__ = [
+    "PATH_SEPARTOR",
+    "SHELL_LIST_SEPARATOR",
+    "Output",
+    "TomlAtomicType",
+    "TomlContainerType",
+    "TomlIndex",
+    "TomlKey",
+    "TomlPath",
+    "TomlPathPart",
+    "TomlType",
+    "__doc__",
+    "__version__",
+    "join_path",
+    "main",
+    "parse_path",
+    "read_toml",
+]
