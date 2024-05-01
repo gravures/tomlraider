@@ -89,15 +89,17 @@ ignore = [
   # 'D102',    # undocumented-public-method
   # 'D103',    # undocumented-public-function
   # 'D104',    # undocumented-public-package
-  'D105', # undocumented-magic-method
-  'D106', # undocumented-public-nested-class
-  'D107', # undocumented-public-init
-  # 'D401',    # non-imperative-mood
+  'D105',    # undocumented-magic-method
+  'D106',    # undocumented-public-nested-class
+  'D107',    # undocumented-public-init
   'TRY003',  # raise-vanilla-args
   'FBT002',  # boolean-default-value-positional-argument
   'FBT001',  # Boolean-typed positional argument in function definition
   'PLR0913', # Too many arguments in function definition ({c_args} > {max_args})
   'ERA001',  # commented code
+  'TD001',   # todo format
+  'TD002',   # todo format
+  'TD003',   # todo format
 ]
 
 [lint.per-file-ignores]
