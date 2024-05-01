@@ -16,30 +16,35 @@
 #
 from __future__ import annotations
 
-from tomlraider._main import (
+from tomlraider._version import __version__
+from tomlraider.cli import __doc__, main
+from tomlraider.core import (
     PATH_SEPARTOR,
     SHELL_LIST_SEPARATOR,
     Output,
     TomlAtomicType,
     TomlContainerType,
+    TOMLDecodeError,
     TomlIndex,
     TomlKey,
+    TOMLLookUpError,
     TomlPath,
+    TOMLPathFormatError,
     TomlPathPart,
     TomlType,
-    __doc__,
     join_path,
-    main,
     parse_path,
     read_toml,
 )
-from tomlraider._version import __version__
 
 
 __all__ = [
     "PATH_SEPARTOR",
     "SHELL_LIST_SEPARATOR",
     "Output",
+    "TOMLDecodeError",
+    "TOMLLookUpError",
+    "TOMLPathFormatError",
     "TomlAtomicType",
     "TomlContainerType",
     "TomlIndex",

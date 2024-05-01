@@ -26,7 +26,7 @@ homepage = "https://github.com/gravures/tomlraider"
 source   = "https://github.com/gravures/tomlraider"
 
 [project.scripts]
-tomlraider = "tomlraider.main:main"
+tomlraider = "cli.main:main"
 
 #####################################################
 # Static type checking with basedPyright
@@ -39,6 +39,7 @@ reportAny                         = false
 reportUnusedCallResult            = false
 reportImplicitStringConcatenation = false
 reportImplicitOverride            = false
+reportMissingSuperCall            = false
 
 #####################################################
 # Coverage config
