@@ -38,16 +38,16 @@ from tomlraider.core import (
     parse_path,
     read_toml,
 )
+from tomlraider.prettyparser import PrettyParser
 
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Sequence
 
     from tomlraider.core import TomlAtomicType, TomlContainerType, TomlPath
 
 
 PROG_NAME = "tomlraider"
-DOC = __doc__
 
 
 def _message(value: str, quiet: bool) -> None:
@@ -72,28 +72,12 @@ class _CLIError(Exception):
         super().__init__()
 
 
-class _HelpFormatter(argparse.HelpFormatter):
-    def add_usage(
-        self,
-        usage: str | None,
-        actions: Iterable[argparse.Action],
-        groups: Iterable[argparse._MutuallyExclusiveGroup],  # type: ignore[reportPrivateUsage]
-        prefix: str | None = None,
-    ) -> None:
-        if prefix is None:
-            prefix = f"{PROG_NAME} {__version__}\n{DOC}\n\nUsage: "
-        return super().add_usage(usage, actions, groups, prefix)
-
-
 def _parse_argv(argv: Sequence[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(
+    parser = PrettyParser(
         prog=PROG_NAME,
-        formatter_class=_HelpFormatter,
-    )
-    parser.add_argument(
-        "property",
-        action="store",
-        help="property to retrieve from toml file",
+        version=__version__,
+        prefix=f"{PROG_NAME} {__version__}",
+        exit_on_error=False,
     )
     parser.add_argument(
         "-j",
@@ -127,14 +111,16 @@ def _parse_argv(argv: Sequence[str] | None = None) -> None:
         help="don't print any message to stderr",
     )
     parser.add_argument(
-        "-v",
-        "--version",
-        action="version",
-        version=f"{PROG_NAME} {__version__}",
-        help="print version and exit",
+        "property",
+        action="store",
+        help="property to retrieve from toml file",
     )
 
-    args: argparse.Namespace = parser.parse_args(argv)
+    try:
+        args: argparse.Namespace = parser.parse_args(argv)
+    except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
+        raise _CLIError(str(e), False) from None  # noqa: FBT003
+
     try:
         property_path: TomlPath = parse_path(args.property)
     except TOMLPathFormatError as e:
@@ -192,7 +178,7 @@ def main(*args: str) -> int:
         - int: The exit code of the program.
     """
     try:
-        _parse_argv(args)
+        _parse_argv(args or None)
     except _CLIError as e:
         _message(value=e.msg, quiet=e.quiet)
         return e.code

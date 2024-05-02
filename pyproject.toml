@@ -26,13 +26,12 @@ homepage = "https://github.com/gravures/tomlraider"
 source   = "https://github.com/gravures/tomlraider"
 
 [project.scripts]
-tomlraider = "cli.main:main"
+tomlraider = "tomlraider.cli:main"
 
 #####################################################
 # Static type checking with basedPyright
 #####################################################
 [tool.basedpyright]
-defineConstant                    = { PATH_SEPARTOR = "." }
 pythonPlatform                    = "all"
 typeCheckingMode                  = "all"
 reportAny                         = false
