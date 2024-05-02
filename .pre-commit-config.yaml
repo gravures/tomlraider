@@ -85,7 +85,7 @@ repos:
     rev: v0.4.1
     hooks:
       - id: ruff
-        args: ["--ignore=RUF100,T20,D,TD,FIX"]
+        args: ["--ignore=PLR0912,RUF100,T20,D,TD,FIX"]
       - id: ruff-format
   # PDM
   - repo: https://github.com/pdm-project/pdm

@@ -57,16 +57,17 @@ def _message(value: str, quiet: bool) -> None:
 
 
 class _CLIError(Exception):
-    _error_codes: ClassVar[dict[type[Exception], int]] = {
+    _error_codes: ClassVar[dict[type[BaseException], int]] = {
         TOMLDecodeError: 2,
         TOMLPathFormatError: 3,
         TOMLLookUpError: 4,
         KeyError: 5,
         IndexError: 6,
+        SystemExit: 0,
     }
 
-    def __init__(self, msg: str, quiet: bool, _from: Exception | None = None) -> None:
-        self.msg: str = msg
+    def __init__(self, msg: str | None, quiet: bool, _from: BaseException | None = None) -> None:
+        self.msg: str = msg or ""
         self.quiet: bool = quiet
         self.code: int = self._error_codes.get(type(_from), 1) if _from else 1
         super().__init__()
@@ -120,6 +121,8 @@ def _parse_argv(argv: Sequence[str] | None = None) -> None:
         args: argparse.Namespace = parser.parse_args(argv)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         raise _CLIError(str(e), False) from None  # noqa: FBT003
+    except SystemExit as e:
+        raise _CLIError(None, False, e) from None  # noqa: FBT003
 
     try:
         property_path: TomlPath = parse_path(args.property)
@@ -180,7 +183,8 @@ def main(*args: str) -> int:
     try:
         _parse_argv(args or None)
     except _CLIError as e:
-        _message(value=e.msg, quiet=e.quiet)
+        if e.msg:
+            _message(value=e.msg, quiet=e.quiet)
         return e.code
     return 0
 

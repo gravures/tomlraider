@@ -124,6 +124,7 @@ class PrettyParser(argparse.ArgumentParser):
             allow_abbrev=allow_abbrev,
             exit_on_error=exit_on_error,
         )
+        self.exit_on_error = exit_on_error
         self.prefix: str = prefix or ""
         self.version: str = version or ""
 
@@ -181,9 +182,10 @@ class PrettyParser(argparse.ArgumentParser):
         status: int = 0,
         message: str | None = None,
     ) -> None:
-        """Exit."""
+        """Either raise an ArgumentError or a SystemExit exception."""
         if status:
             raise argparse.ArgumentError(None, message or "unknown error")
+        raise SystemExit(message)
 
     def error(  # type:ignore[reportIncompatibleMethodOverride] # dead: disable
         self,
@@ -196,8 +198,12 @@ class PrettyParser(argparse.ArgumentParser):
         not return -- it should either exit or raise an exception.
         """
         self.print_usage()
-        args = {"message": message}
-        self.exit(2, _("error: %(message)s\n") % args)
+
+        if self.exit_on_error:
+            args = {"message": message}
+            self.exit(2, _("error: %(message)s\n") % args)
+
+        raise argparse.ArgumentError(None, message)
 
     def print_usage(self, file: IO[str] | None = None) -> None:
         """Prints the usage message."""
@@ -211,7 +217,11 @@ class PrettyParser(argparse.ArgumentParser):
             file = sys.stderr
         self._print_message(self.format_help(), file)
 
-    def _print_message(self, message: str, file: IO[str] | None = None) -> None:  # noqa: PLR6301
+    def _print_message(  # noqa: PLR6301
+        self,
+        message: str,
+        file: IO[str] | None = None,
+    ) -> None:
         if message:
             if file is None:
                 file = sys.stderr
