@@ -1,6 +1,5 @@
 """Tomlraider core functions."""
 
-#
 # Copyright (c) 2024 - Gilles Coissac
 #
 # tomlraider is free software: you can redistribute it and/or modify
@@ -50,7 +49,7 @@ class TOMLLookUpError(Exception):
 
 TomlAtomicType: TypeAlias = bool | str | int | float | datetime | date | time
 TomlContainerType: TypeAlias = "dict[str, TomlType] | list[TomlType]"
-TomlType: TypeAlias = TomlAtomicType | TomlContainerType
+TomlType: TypeAlias = "TomlAtomicType | TomlContainerType"
 
 TomlIndex = NewType("TomlIndex", int)
 TomlKey = NewType("TomlKey", str)
