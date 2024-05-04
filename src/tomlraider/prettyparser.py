@@ -17,6 +17,7 @@
 #
 #
 # NOTE: https://github.com/kislyuk/argcomplete
+#       https://github.com/hamdanal/rich-argparse
 
 from __future__ import annotations
 
@@ -105,6 +106,7 @@ class PrettyParser(argparse.ArgumentParser):
         add_help: bool = True,
         allow_abbrev: bool = True,
         exit_on_error: bool = True,
+        auto_complete: bool = False,
     ) -> None:
         if parents is None:
             parents = []
@@ -137,6 +139,17 @@ class PrettyParser(argparse.ArgumentParser):
                 default=argparse.SUPPRESS,
                 help="print version",
             )
+
+        if auto_complete:
+            ...
+
+    def autocomplete(self) -> None:
+        """Adds support for shell completion.
+
+        Adds support for shell completion via argcomplete_
+        by patching given `argparse.ArgumentParser` (sub)class.
+        If completion is not enabled, logs a debug-level message.
+        """
 
     def format_usage(self):
         """Ask HelpFormatter to format the usage string."""
@@ -226,3 +239,22 @@ class PrettyParser(argparse.ArgumentParser):
             if file is None:
                 file = sys.stderr
             file.write(message)
+
+
+def autocomplete(parser: argparse.ArgumentParser) -> None:
+    """Adds support for shell completion.
+
+    Adds support for shell completion via argcomplete_
+    by patching given `argparse.ArgumentParser` (sub)class.
+    If completion is not enabled, logs a debug-level message.
+    """
+    try:
+        import argcomplete  # type:ignore[reportAssignmentType]  # noqa: PLC0415
+    except ImportError:
+        import os  # noqa: PLC0415
+
+        if "bash" in os.getenv("SHELL", ""):  # zsh
+            msg = "Bash completion is not available. Please install argcomplete."
+            raise ImportError(msg) from None
+    else:
+        argcomplete.autocomplete(parser)  # type:ignore[reportUnknownMemberType]
