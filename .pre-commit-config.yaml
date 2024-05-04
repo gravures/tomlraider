@@ -66,10 +66,6 @@ repos:
       - id: rst-backticks
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
-  - repo: https://github.com/asottile/dead
-    rev: v1.5.2
-    hooks:
-      - id: dead
   - repo: https://github.com/DetachHead/basedpyright
     rev: v1.10.3
     hooks:
