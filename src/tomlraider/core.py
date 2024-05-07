@@ -25,7 +25,7 @@ from tomllib import TOMLDecodeError as _TOMLDecodeError
 from typing import NewType, TypeAlias
 
 
-PATH_SEPARTOR = "."
+PATH_SEPARATOR = "."
 SHELL_LIST_SEPARATOR = " "
 
 TOMLDecodeError = _TOMLDecodeError
@@ -139,7 +139,7 @@ def _look_for_key_indice(key: str) -> tuple[str, str] | None:
 def parse_path(path: str) -> TomlPath:
     """Parses a string into a TomlPath."""
     out: TomlPath = []
-    for part in path.split(PATH_SEPARTOR):
+    for part in path.split(PATH_SEPARATOR):
         if not part:
             continue
         if _validate_key(part):
@@ -158,7 +158,7 @@ def join_path(path: TomlPath) -> str:
     for part in path:
         match part:
             case str():
-                out.extend((PATH_SEPARTOR, part))
+                out.extend((PATH_SEPARATOR, part))
             case int():
                 out.append(f"[{part}]")
     return "".join(out)
@@ -181,7 +181,7 @@ def dumps(value: TomlType, output: Output, path: str) -> str:
         case list():
             ret = SHELL_LIST_SEPARATOR.join(map(str, value))
         case dict():
-            ret = f"{PATH_SEPARTOR}{path}"
+            ret = f"{PATH_SEPARATOR}{path}"
         case _:
             # should never happened
             msg = f"Unsupported type: {type(value)}"
