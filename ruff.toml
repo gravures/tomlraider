@@ -3,8 +3,8 @@
 #      https://docs.astral.sh/ruff/rules
 line-length  = 99
 indent-width = 4
-src          = ["src", "tests", 'typings'] # ["."]
-exclude      = ['docs/conf.py']
+src          = ["src", "tests"]            # ["."]
+exclude      = ['docs/conf.py', 'typings']
 builtins     = ["_i"]                      # ipython hidden variable
 fix          = false
 
