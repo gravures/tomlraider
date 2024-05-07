@@ -19,7 +19,7 @@ from __future__ import annotations
 from tomlraider._version import __version__
 from tomlraider.cli import __doc__, main
 from tomlraider.core import (
-    PATH_SEPARTOR,
+    PATH_SEPARATOR,
     SHELL_LIST_SEPARATOR,
     Output,
     TomlAtomicType,
@@ -39,7 +39,7 @@ from tomlraider.core import (
 
 
 __all__ = [
-    "PATH_SEPARTOR",
+    "PATH_SEPARATOR",
     "SHELL_LIST_SEPARATOR",
     "Output",
     "TOMLDecodeError",

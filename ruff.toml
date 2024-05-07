@@ -3,9 +3,9 @@
 #      https://docs.astral.sh/ruff/rules
 line-length  = 99
 indent-width = 4
-src          = ["src", "tests"] # ["."]
+src          = ["src", "tests", 'typings'] # ["."]
 exclude      = ['docs/conf.py']
-builtins     = ["_i"]           # ipython hidden variable
+builtins     = ["_i"]                      # ipython hidden variable
 fix          = false
 
 [format]
@@ -36,7 +36,7 @@ select = [
   'ASYNC', # flake8-async
   'BLE',   # flake8-blind-except
   'S',     # flake8-bandit
-  'FBT',   # flake8-bolean-trap
+  'FBT',   # flake8-boolean-trap
   'COM',   # flake8-commas
   'CPY',   # flake8-copyright
   'DTZ',   # flake8-datetimez
@@ -97,18 +97,23 @@ ignore = [
   'FBT001',  # Boolean-typed positional argument in function definition
   'PLR0913', # Too many arguments in function definition ({c_args} > {max_args})
   'ERA001',  # commented code
+  'S404',    # subprocess is evil
   'TD001',   # todo format
   'TD002',   # todo format
   'TD003',   # todo format
+  'PT013',   # Found incorrect import of pytest
+  'SLF001',
+  'PLC2701',
 ]
 
 [lint.per-file-ignores]
 "tests/**.py" = [
-  "T20",  # Allow print statements in tests
-  "D",    # Ignore docstring rules in tests
-  "ANN",  # Ignore type annotations in tests
-  "S101", # Yeah of course we assert in tests
-  "B009", # Allow calling `getattr` in tests since it can be used to make the test clearer.
+  "T20",    # Allow print statements in tests
+  "D",      # Ignore docstring rules in tests
+  "ANN",    # Ignore type annotations in tests
+  "S101",   # Yeah of course we assert in tests
+  "B009",   # Allow calling `getattr` in tests since it can be used to make the test clearer.
+  "CPY001", # missing copyright
 ]
 
 [lint.isort]

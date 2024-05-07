@@ -22,6 +22,9 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
+import shutil
+import subprocess as sp
 import sys
 from typing import IO, TYPE_CHECKING, Any
 
@@ -40,6 +43,15 @@ except ImportError:
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
+
+
+def which_shell() -> str | None:
+    """Identify in which shell the current process is running on.
+
+    Currently supported shell: bash, fish, zsh, powershell, gitbash.
+    """
+    if not all((sys.__stderr__, sys.__stdout__)):
+        return None
 
 
 class PrettyHelpFormatter(
@@ -127,6 +139,7 @@ class PrettyParser(argparse.ArgumentParser):
             exit_on_error=exit_on_error,
         )
         self.exit_on_error = exit_on_error
+        self.auto_complete = auto_complete
         self.prefix: str = prefix or ""
         self.version: str = version or ""
 
@@ -140,16 +153,34 @@ class PrettyParser(argparse.ArgumentParser):
                 help="print version",
             )
 
-        if auto_complete:
-            ...
-
     def autocomplete(self) -> None:
-        """Adds support for shell completion.
+        """Activate support for shell completion.
 
-        Adds support for shell completion via argcomplete_
-        by patching given `argparse.ArgumentParser` (sub)class.
-        If completion is not enabled, logs a debug-level message.
+        Adds support for shell completion via argcomplete
+        if found on the path.
         """
+        # TODO: handling other shell
+        # TODO: what's on with windows?
+        if importlib.util.find_spec(name="argcomplete"):
+            argcomplete = importlib.import_module(name="argcomplete")
+            argcomplete.autocomplete(self)
+            register = shutil.which("register-python-argcomplete") or "register-python-argcomplete"
+            shell = shutil.which("bash") or "bash"
+            cp = sp.run(
+                args=[register, "--no-defaults", "-s", "bash", self.prog],
+                shell=False,
+                capture_output=True,
+                check=False,
+            )
+            sp.run(shell, input=cp.stdout, check=True, shell=False)  # noqa: S603
+
+    def parse_args(  # type:ignore[reportIncompatibleMethodOverride]
+        self, args: Sequence[str] | None = None, namespace: argparse.Namespace | None = None
+    ) -> argparse.Namespace:
+        """Parse command line arguments."""
+        if self.auto_complete:
+            self.autocomplete()
+        return super().parse_args(args, namespace)
 
     def format_usage(self):
         """Ask HelpFormatter to format the usage string."""
@@ -239,22 +270,3 @@ class PrettyParser(argparse.ArgumentParser):
             if file is None:
                 file = sys.stderr
             file.write(message)
-
-
-def autocomplete(parser: argparse.ArgumentParser) -> None:
-    """Adds support for shell completion.
-
-    Adds support for shell completion via argcomplete_
-    by patching given `argparse.ArgumentParser` (sub)class.
-    If completion is not enabled, logs a debug-level message.
-    """
-    try:
-        import argcomplete  # type:ignore[reportAssignmentType]  # noqa: PLC0415
-    except ImportError:
-        import os  # noqa: PLC0415
-
-        if "bash" in os.getenv("SHELL", ""):  # zsh
-            msg = "Bash completion is not available. Please install argcomplete."
-            raise ImportError(msg) from None
-    else:
-        argcomplete.autocomplete(parser)  # type:ignore[reportUnknownMemberType]

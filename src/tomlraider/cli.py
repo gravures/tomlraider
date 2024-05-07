@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 """Retrieve properties from toml files."""
 
 #
@@ -16,6 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with tomlraider. If not, see <https://www.gnu.org/licenses/>
+#
 
 from __future__ import annotations
 
@@ -28,7 +30,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from tomlraider._version import __version__
 from tomlraider.core import (
-    PATH_SEPARTOR,
+    PATH_SEPARATOR,
     Output,
     TOMLDecodeError,
     TOMLLookUpError,
@@ -44,7 +46,7 @@ from tomlraider.prettyparser import PrettyParser
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from tomlraider.core import TomlAtomicType, TomlContainerType, TomlPath
+    from tomlraider.core import TomlAtomicType, TomlContainerType
 
 
 PROG_NAME = "tomlraider"
@@ -58,12 +60,13 @@ def _message(value: str, quiet: bool) -> None:
 
 class _CLIError(Exception):
     _error_codes: ClassVar[dict[type[BaseException], int]] = {
+        SystemExit: 0,
+        Exception: 1,
         TOMLDecodeError: 2,
         TOMLPathFormatError: 3,
         TOMLLookUpError: 4,
         KeyError: 5,
         IndexError: 6,
-        SystemExit: 0,
     }
 
     def __init__(self, msg: str | None, quiet: bool, _from: BaseException | None = None) -> None:
@@ -73,12 +76,23 @@ class _CLIError(Exception):
         super().__init__()
 
 
-def _parse_argv(argv: Sequence[str] | None = None) -> None:
+def _get_parser() -> argparse.ArgumentParser:
+    # def choices_completer(**kwargs):
+    #     return ("un", "deux", "trois", "quatre")
+
     parser = PrettyParser(
         prog=PROG_NAME,
         version=__version__,
         prefix=f"{PROG_NAME} {__version__}",
         exit_on_error=False,
+        auto_complete=True,
+    )
+    parser.add_argument(
+        "-t",
+        "--test",
+        dest="test",
+        choices=("un", "deux", "trois", "quatre"),
+        help="test completion",
     )
     parser.add_argument(
         "-j",
@@ -116,72 +130,84 @@ def _parse_argv(argv: Sequence[str] | None = None) -> None:
         action="store",
         help="property to retrieve from toml file",
     )
+    return parser
 
+
+def _parse_argv(
+    parser: argparse.ArgumentParser, argv: Sequence[str] | None = None
+) -> argparse.Namespace:
     try:
-        args: argparse.Namespace = parser.parse_args(argv)
+        params: argparse.Namespace = parser.parse_args(argv)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise _CLIError(str(e), False) from None  # noqa: FBT003
+        raise _CLIError(msg=str(e), quiet=False) from None
     except SystemExit as e:
-        raise _CLIError(None, False, e) from None  # noqa: FBT003
+        raise _CLIError(msg=None, quiet=False, _from=e) from None
 
     try:
-        property_path: TomlPath = parse_path(args.property)
+        params.property_path = parse_path(params.property)
     except TOMLPathFormatError as e:
-        raise _CLIError(e.msg, args.quiet, e) from None
-    output: Output = Output.JSON if args.json else Output.SHELL
-    input_file: str | None = args.file
+        raise _CLIError(e.msg, params.quiet, e) from None
+    params.output = Output.JSON if params.json else Output.SHELL
 
     # Verify input file
-    if args.pyproject:
+    if params.pyproject:
         # looking for a <pyproject.toml> file
         meson_root = os.environ.get("MESON_SOURCE_ROOT", None)
         root: Path = Path(meson_root) if meson_root else Path.cwd()
         tmp = root / "pyproject.toml"
         if not tmp.exists():
-            raise _CLIError(msg="<pyproject.toml> file not found", quiet=args.quiet)
-        input_file = str(tmp)
-    elif input_file not in {"-", None} and not Path(str(input_file)).exists():
-        raise _CLIError(msg=f"File not found: {input_file}", quiet=args.quiet)
+            raise _CLIError(msg="<pyproject.toml> file not found", quiet=params.quiet)
+        params.file = str(tmp)
+    elif params.file not in {"-", None} and not Path(str(params.file)).exists():
+        raise _CLIError(msg=f"File not found: {params.file}", quiet=params.quiet)
+    return params
 
+
+def _read_buffer(params: argparse.Namespace) -> str:
     # Format sys.argv for fileinput module
     # FIXME: - main called from python
     #        - what when argparse exit by itself
     sys.argv = [sys.argv[0]]
-    if input_file:
-        sys.argv.append(input_file)
+    if params.file:
+        sys.argv.append(params.file)
 
     with fileinput.input(mode="r", encoding="utf-8") as _file:
-        file_name = input_file or "stdin"
+        file_name = params.file or "stdin"
         _message(
-            f"Reading property <{join_path(property_path)}> from <{file_name}>...\n",
-            args.quiet,
+            f"Reading property <{join_path(params.property_path)}> from <{file_name}>...\n",
+            params.quiet,
         )
-        buffer = "".join(list(_file))
+        return "".join(list(_file))
 
+
+def _parse_request(buffer: str, params: argparse.Namespace) -> None:
     try:
-        value: TomlAtomicType | TomlContainerType = read_toml(buffer, property_path)
+        value: TomlAtomicType | TomlContainerType = read_toml(buffer, params.property_path)
     except TOMLDecodeError as e:
-        msg = f"error decoding <{file_name}>, {e}"
-        raise _CLIError(msg, args.quiet, e) from None
+        msg = f"error decoding <{params.file_name}>, {e}"
+        raise _CLIError(msg, params.quiet, e) from None
     except TOMLLookUpError as e:
-        raise _CLIError(e.msg, args.quiet, e) from None
+        raise _CLIError(e.msg, params.quiet, e) from None
     else:
         sys.stdout.write(
-            dumps(value=value, output=output, path=args.property.strip(PATH_SEPARTOR))
+            dumps(value=value, output=params.output, path=params.property.strip(PATH_SEPARATOR))
         )
 
 
-def main(*args: str) -> int:
+def main(*args: str) -> int:  # noqa: D417
     """Entry point of the program.
 
-    - Args:
-        - *args (str): Command line arguments.
+    Args:
+        Command line arguments.
 
-    - Returns:
-        - int: The exit code of the program.
+    Returns:
+        The exit code of the program.
     """
     try:
-        _parse_argv(args or None)
+        parser = _get_parser()
+        params = _parse_argv(parser, argv=args or None)
+        buffer = _read_buffer(params)
+        _parse_request(buffer, params)
     except _CLIError as e:
         if e.msg:
             _message(value=e.msg, quiet=e.quiet)
