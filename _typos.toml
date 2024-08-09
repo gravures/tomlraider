@@ -1,0 +1,7 @@
+# https://github.com/crate-ci/typos
+
+[files]
+ignore-vcs = true
+ignore-dot = true
+
+[default.extend-words]

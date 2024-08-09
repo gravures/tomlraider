@@ -6,8 +6,6 @@ name = "tomlraider"
 description = "A cli program retrieving properties from .toml files."
 authors = [{ name = "Gilles Coissac", email = "gilles@ideographe.fr" }]
 license = { text = "GPL-3.0" }
-requires-python = ">=3.11"
-dependencies = ["argcomplete>=3.3.0"]
 readme = "README.md"
 keywords = ["toml", "cli", "configuration"]
 classifiers = [
@@ -18,12 +16,17 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
 ]
 dynamic = ["version"]
+requires-python = ">=3.11"
+dependencies = ["argcomplete>=3.3.0"]
 
 [project.urls]
 homepage = "https://github.com/gravures/tomlraider"
-source   = "https://github.com/gravures/tomlraider"
+repository   = "https://github.com/gravures/tomlraider"
+documentation = "https://github.com/gravures/tomlraider"
+issue = "https://github.com/gravures/tomlraider/issue"
 
 [project.scripts]
 tomlraider = "tomlraider.cli:main"
@@ -38,32 +41,39 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 
+[tool.pdm.build]
+package-dir      = "src"
+editable-backend = "editables"
+
 [tool.pdm.version]
 source         = "scm"
 write_to       = "tomlraider/_version.py"
 write_template = "__version__ = '{}'"
 
-[tool.pdm.build]
-editable-backend = "editables"
-
 [tool.pdm.dev-dependencies]
 dev = [
-  "ruff==0.4.1",
-  "basedpyright==1.10.3",
-  "pre-commit==3.7.0",
+  "ruff>=0.5",
+  "basedpyright>=1.15",
+  "pre-commit>=3.7.0",
+  "tox-pdm>=0.7.2",
   "tox-pdm>=0.7.2",
   "dead>=1.5.2",
+  "pretty-errors>=1.2.25",
 ]
-test = ["pytest", "hypothesis", "coverage[toml]", "tox>=4.0", "dm-tree>=0.1.8"]
+test = ["pytest", "hypothesis", "coverage[toml]", "tox>=4.0", "dm-tree>=0.1.8", "editables>=0.5"]
 
+#####################################################
+# PDM SCRIPTS
+#####################################################
 [tool.pdm.scripts]
+traceback   = "_traceback.py"
 xrequire    = "pdm export -f requirements -o requirements.txt"
 test        = "pytest -s -v -k {args}"
 test_all    = "coverage run -m pytest"
 test_typing = "pdm run basedpyright --stats ./src/tomlraider"
 test_cover  = "coverage report"
 tox_testme  = "tox --develop -r -e py"
-pc_init     = "pre-commit install"
+pc_init     = "pre-commit install --install-hooks"
 pc_update   = "pre-commit autoupdate"
 pc_check    = { env = { "SKIP" = "basedpyright" }, cmd = "pre-commit run --all-files" }
 dead        = "dead"
@@ -71,4 +81,7 @@ pc_clean    = "pre-commit clean && pre-commit gc"
 deps        = "pdm list --fields name,groups,version,licenses,homepage --sort groups,name,licenses --exclude :sub"
 
 [tool.pdm.scripts.pc_safety]
-composite = ["require", "pre-commit run python-safety-dependencies-check"]
+composite = ["xrequire", "pre-commit run python-safety-dependencies-check"]
+
+[tool.pdm.scripts.suite]
+composite = ["echo '\f'", "pdm show", "echo '\nDEPS'", "deps", "echo '\nPRE-COMMIT'", "pc_check", "echo '\nTYPING'", "test_typing", "echo '\nDEAD CODE'", "dead", "echo '\nCOVERAGE'", "test_cover"]
