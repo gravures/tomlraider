@@ -1,5 +1,3 @@
-"""Tomlraider core functions."""
-
 # Copyright (c) 2024 - Gilles Coissac
 #
 # tomlraider is free software: you can redistribute it and/or modify
@@ -14,6 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with tomlraider. If not, see <https://www.gnu.org/licenses/>
+"""Tomlraider core functions."""
+
 from __future__ import annotations
 
 import enum
@@ -92,7 +92,24 @@ class Output(enum.Enum):
 
 
 def read_toml(buffer: str, path: TomlPath) -> TomlAtomicType | TomlContainerType:
-    """Returns property from a toml string buffer."""
+    r"""Returns property from a toml string buffer.
+
+    Args:
+        buffer (str): The TOML string buffer.
+        path (TomlPath): The path to the property.
+
+    Returns:
+        Union[TomlAtomicType, TomlContainerType]: The property value.
+
+    Raises:
+        TOMLLookUpError: If there is an error in the TOML lookup.
+
+    Examples:
+        >>> buffer = [section]\nkey = "value"
+        >>> path = ["section", "key"]
+        >>> read_toml(buffer, path)
+        value
+    """
     root = tomllib.loads(buffer)
     locations: list[TomlContainer] = [TomlContainer(root)]
 
@@ -107,7 +124,7 @@ def read_toml(buffer: str, path: TomlPath) -> TomlAtomicType | TomlContainerType
         loc: TomlContainer = locations[-1]
         if isinstance(loc[part], (dict, list)):
             locations.append(
-                TomlContainer(loc[part]),  # type: ignore[rerportAssignmentType]
+                TomlContainer(loc[part]),  # pyright: ignore[reportArgumentType]
             )
             continue
 
@@ -137,7 +154,22 @@ def _look_for_key_indice(key: str) -> tuple[str, str] | None:
 
 
 def parse_path(path: str) -> TomlPath:
-    """Parses a string into a TomlPath."""
+    """Parses a string into a TomlPath.
+
+    Args:
+        path (str): The string representing the TOML path.
+
+    Returns:
+        TomlPath: The parsed TOML path as a list of TomlKey and TomlIndex objects.
+
+    Raises:
+        TOMLPathFormatError: If the path has an invalid format.
+
+    Examples:
+        >>> path = "section.key[0]"
+        >>> parse_path(path)
+        [TomlKey('section'), TomlKey('key'), TomlIndex(0)]
+    """
     out: TomlPath = []
     for part in path.split(PATH_SEPARATOR):
         if not part:
@@ -153,7 +185,21 @@ def parse_path(path: str) -> TomlPath:
 
 
 def join_path(path: TomlPath) -> str:
-    """Join a TomlPath into a string."""
+    """Joins a TomlPath into a string.
+
+    Args:
+        path (TomlPath): The TOML path as a list of TomlKey and TomlIndex objects.
+
+    Returns:
+        str: The joined TOML path as a string.
+
+    Examples:
+        >>> path = [TomlKey('section'), TomlKey('key'), TomlIndex(0)]
+        >>> join_path(path)
+        section.key[0]
+    """
+    # Function implementation
+
     out: list[str] = []
     for part in path:
         match part:
@@ -165,7 +211,19 @@ def join_path(path: TomlPath) -> str:
 
 
 def dumps(value: TomlType, output: Output, path: str) -> str:
-    """Return a string from a TomlType."""
+    """Returns a string from a TomlType.
+
+    Args:
+        value (TomlType): The TOML value to convert to a string.
+        output (Output): The desired output format.
+        path (str): The path of the TOML value.
+
+    Returns:
+        str: The converted TOML value as a string.
+
+    Raises:
+        NotImplementedError: If the value has an unsupported type.
+    """
     if output is Output.JSON:
         return json.dumps(value)
 
