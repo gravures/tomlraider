@@ -20,13 +20,16 @@ classifiers = [
 ]
 dynamic = ["version"]
 requires-python = ">=3.11"
-dependencies = ["argcomplete>=3.3.0"]
+dependencies = [
+    "standard-deluxe @ git+https://github.com/gravures/standard-deluxe@dev-features",
+    "argcomplete>=3.3.0",
+]
 
 [project.urls]
-homepage = "https://github.com/gravures/tomlraider"
-repository   = "https://github.com/gravures/tomlraider"
+homepage      = "https://github.com/gravures/tomlraider"
+repository    = "https://github.com/gravures/tomlraider"
 documentation = "https://github.com/gravures/tomlraider"
-issue = "https://github.com/gravures/tomlraider/issue"
+issue         = "https://github.com/gravures/tomlraider/issue"
 
 [project.scripts]
 tomlraider = "tomlraider.cli:main"
@@ -60,7 +63,14 @@ dev = [
   "dead>=1.5.2",
   "pretty-errors>=1.2.25",
 ]
-test = ["pytest", "hypothesis", "coverage[toml]", "tox>=4.0", "dm-tree>=0.1.8", "editables>=0.5"]
+test = [
+  "pytest",
+  "hypothesis",
+  "coverage[toml]",
+  "tox>=4.0",
+  "dm-tree>=0.1.8",
+  "editables>=0.5",
+]
 
 #####################################################
 # PDM SCRIPTS
@@ -84,4 +94,17 @@ deps        = "pdm list --fields name,groups,version,licenses,homepage --sort gr
 composite = ["xrequire", "pre-commit run python-safety-dependencies-check"]
 
 [tool.pdm.scripts.suite]
-composite = ["echo '\f'", "pdm show", "echo '\nDEPS'", "deps", "echo '\nPRE-COMMIT'", "pc_check", "echo '\nTYPING'", "test_typing", "echo '\nDEAD CODE'", "dead", "echo '\nCOVERAGE'", "test_cover"]
+composite = [
+  "echo '\f'",
+  "pdm show",
+  "echo '\nDEPS'",
+  "deps",
+  "echo '\nPRE-COMMIT'",
+  "pc_check",
+  "echo '\nTYPING'",
+  "test_typing",
+  "echo '\nDEAD CODE'",
+  "dead",
+  "echo '\nCOVERAGE'",
+  "test_cover",
+]

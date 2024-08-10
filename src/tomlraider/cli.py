@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
-"""Retrieve properties from toml files."""
-
 #
 # Copyright (c) 2024 - Gilles Coissac
 #
@@ -18,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with tomlraider. If not, see <https://www.gnu.org/licenses/>
 #
+"""Retrieve properties from toml files."""
 
 from __future__ import annotations
 
@@ -27,6 +26,8 @@ import os
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
+
+from deluxe.console import PrettyParser
 
 from tomlraider._version import __version__
 from tomlraider.core import (
@@ -40,7 +41,6 @@ from tomlraider.core import (
     parse_path,
     read_toml,
 )
-from tomlraider.prettyparser import PrettyParser
 
 
 if TYPE_CHECKING:
@@ -77,22 +77,12 @@ class _CLIError(Exception):
 
 
 def _get_parser() -> argparse.ArgumentParser:
-    # def choices_completer(**kwargs):
-    #     return ("un", "deux", "trois", "quatre")
-
     parser = PrettyParser(
         prog=PROG_NAME,
         version=__version__,
         prefix=f"{PROG_NAME} {__version__}",
         exit_on_error=False,
-        auto_complete=True,
-    )
-    parser.add_argument(
-        "-t",
-        "--test",
-        dest="test",
-        choices=("un", "deux", "trois", "quatre"),
-        help="test completion",
+        shell_completion=True,
     )
     parser.add_argument(
         "-j",

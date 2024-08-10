@@ -5,7 +5,7 @@
 groups = ["default", "dev", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:c95f8b810ea0a913ab0c2955b0365c6942caf4e68b082a26c2093a236e85f567"
+content_hash = "sha256:ce36c7899eb72008ef72a5e61742694dea5b79f0d424177c5583ad1a2d67789e"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
@@ -468,6 +468,16 @@ files = [
     {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
     {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
 ]
+
+[[package]]
+name = "standard-deluxe"
+version = "0.1.1.dev29"
+requires_python = ">=3.9"
+git = "https://github.com/gravures/standard-deluxe"
+ref = "dev-features"
+revision = "9dd2759f27d710b476f3006651b5c3bcb3055ba3"
+summary = "A handfull collection of python utilities."
+groups = ["default"]
 
 [[package]]
 name = "tox"
