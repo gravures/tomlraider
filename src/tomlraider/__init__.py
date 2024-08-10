@@ -17,7 +17,7 @@
 from __future__ import annotations
 
 from tomlraider._version import __version__
-from tomlraider.cli import __doc__, main
+from tomlraider.cli import __doc__, main  # noqa: A004
 from tomlraider.core import (
     PATH_SEPARATOR,
     SHELL_LIST_SEPARATOR,
